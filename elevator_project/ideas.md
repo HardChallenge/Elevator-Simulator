@@ -42,3 +42,11 @@ long weight; (in kg);
 1. Seteaza-ti JDBC, vezi cum faci proceduri, apeleaza-le si vezi ca poti lua date din baza de date.
 2. Creeaza clasele Elevator pentru fiecare rand din tabela.
 3. ....
+
+
+Ideas for SGBD:
+1. O functie care ordoneaza dupa un parametru dat dinamic + ascendent sau descendent + table_name
+ex: create or replace procedure ordoneaza (table_name text, camp text, order text)
+query := 'select * from {table_name} order by {camp} {order}'
+
+2. O functie cu 3 parametrici dinamici, table_name, camp si valoare care returneaza un result set si imita 'WHERE'
