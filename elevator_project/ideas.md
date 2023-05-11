@@ -54,3 +54,12 @@ ex: create or replace procedure ordoneaza (table_name text, camp text, order tex
 query := 'select * from {table_name} order by {camp} {order}'
 
 2. O functie cu 3 parametrici dinamici, table_name, camp si valoare care returneaza un result set si imita 'WHERE'
+
+
+## PROBLEME
+Daca liftul e la etajul 0 si primeste call la etajul 0, nu merge.
+
+
+## Ce mai trebuie implementat
+Chestiile legate de Trips care sunt in telefon
+Sa verifici daca atunci cand capacitatea este maxima, lucrurile merg asa cum trebuie

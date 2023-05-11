@@ -20,7 +20,7 @@ public class ElevatorCreator {
 
     public List<Elevator> create(){
         List<Elevator> elevatorList;
-        elevatorList = IntStream.rangeClosed(1, numberOfElevators).mapToObj(n -> {
+        elevatorList = IntStream.range(0, numberOfElevators).mapToObj(n -> {
             Random rand = new Random();
             int elevatorID = n, maxCapacity = rand.nextInt(0, 201) + 400; // capacity between 400-600kg
             boolean haveMirror = rand.nextBoolean();

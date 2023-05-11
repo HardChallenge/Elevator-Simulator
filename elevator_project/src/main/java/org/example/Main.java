@@ -42,18 +42,35 @@ public class Main {
         for(int i = 0, n = elevatorList.size(); i<n; i++){
             calls.add(new ArrayList<>());
         }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+            for (Elevator thread : elevatorList) {
+                thread.stopRunning();
+                thread.join();
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }));
+
         System.out.println("Project initialized successfully.\nTo add clients -> client <from> <to> <elevatorId> <weight>");
+
+        // starting the elevator threads
+        elevatorList.get(0).start();
+        //for(Elevator elevator : elevatorList) elevator.start();
+        //--------
         String command = "";
         scanner.nextLine(); // clear the input from newline
         while(!command.equals("exit")){
 
-            for(int i = 0, n = calls.size(); i<n; i++){
-                System.out.println("Elevator with id " + i + ":");
-                for(int j = 0, m = calls.get(i).size(); j<m; j++){
-                    System.out.print(calls.get(i).get(j) + " ");
-                }
-                System.out.println();
-            }
+//            for(int i = 0, n = calls.size(); i<n; i++){
+//                System.out.println("Elevator with id " + i + ":");
+//                for(int j = 0, m = calls.get(i).size(); j<m; j++){
+//                    System.out.print(calls.get(i).get(j) + " ");
+//                }
+//                System.out.println();
+//            }
 
             command = scanner.nextLine();
             if(command.matches("^client\\s\\d+\\s\\d+\\s\\d+\\s\\d+")){
@@ -98,21 +115,19 @@ public class Main {
             // sunt un thread care vrea sa isi citeasca din calls
             // params: int elevatorId -> params[0]
             int elevatorId = (int) params[0];
-            List<Client> called = calls.get(elevatorId);
-            if(called.size() == 0){
-                return null;
-            } else {
-                calls.set(elevatorId, new ArrayList<>());
-                return called;
-            }
+            List<Client> called = new ArrayList<>(calls.get(elevatorId));
+            calls.set(elevatorId, new ArrayList<>());
+            return called;
+
         } else if (type.equals("write")){
             //sunt main thread care vrea sa scrie o noua cerere
             //params: int elevatorId -> params[0], Client client -> params[1];
             int elevatorId = (int) params[0];
             Client client = (Client) params[1];
             calls.get(elevatorId).add(client);
+            return null;
         }
-        return null;
+        return new ArrayList<>();
     }
 
     private static boolean validateInput(int from, int to, int elevatorId, int weight){
