@@ -1,14 +1,12 @@
 package org.example;
 
-import models.Client;
-import models.Elevator;
-import models.ElevatorCreator;
-import models.Repository;
+import models.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Main {
     private static final String url = "jdbc:postgresql://localhost/Elevators";
@@ -18,9 +16,11 @@ public class Main {
     public static int numberOfElevators = 0, numberOfFloors = 0;
     public static List<Elevator> elevatorList;
     private static volatile List<List<Client>> calls;
+    public static volatile ConcurrentLinkedQueue<Trip> trips;
 
     static{
         calls = new ArrayList<>();
+        trips = new ConcurrentLinkedQueue<>();
     }
 
 
@@ -42,13 +42,15 @@ public class Main {
         for(int i = 0, n = elevatorList.size(); i<n; i++){
             calls.add(new ArrayList<>());
         }
-
+        TripCreator tripCreator = new TripCreator(repository);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
             for (Elevator thread : elevatorList) {
                 thread.stopRunning();
                 thread.join();
                 }
+            tripCreator.stopRunning();
+            tripCreator.join();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -56,22 +58,17 @@ public class Main {
 
         System.out.println("Project initialized successfully.\nTo add clients -> client <from> <to> <elevatorId> <weight>");
 
-        // starting the elevator threads
-        elevatorList.get(0).start();
-        //for(Elevator elevator : elevatorList) elevator.start();
+        // starting the threads
+        for(Elevator elevator : elevatorList) elevator.start();
+        tripCreator.start(); // client 2 5 0 30    client 6 3 0 28   client 8 5 0 40   client 5 9 0 60
         //--------
         String command = "";
         scanner.nextLine(); // clear the input from newline
         while(!command.equals("exit")){
-
-//            for(int i = 0, n = calls.size(); i<n; i++){
-//                System.out.println("Elevator with id " + i + ":");
-//                for(int j = 0, m = calls.get(i).size(); j<m; j++){
-//                    System.out.print(calls.get(i).get(j) + " ");
-//                }
-//                System.out.println();
-//            }
-
+            System.out.println("Trips:");
+            for(Trip trip : trips){
+                System.out.println(trip.toString());
+            }
             command = scanner.nextLine();
             if(command.matches("^client\\s\\d+\\s\\d+\\s\\d+\\s\\d+")){
                 String[] parts = command.split(" ");
