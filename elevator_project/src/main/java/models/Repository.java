@@ -14,7 +14,7 @@ public class Repository {
         statement.executeUpdate("call initialize()");
     }
 
-    public boolean create(String name, Object... params) throws SQLException {
+    public void create(String name, Object... params) throws SQLException {
         String tableName = name.toLowerCase(), DDL;
         PreparedStatement statement;
         if(tableName.equals("elevators")){
@@ -24,7 +24,7 @@ public class Repository {
             statement.setBoolean(2, (boolean) params[1]);
             statement.setString(3, (String) params[2]);
             statement.executeUpdate();
-            return true;
+
         } else if(tableName.equals("trips")){
             DDL = "INSERT INTO trips(elevatorID, startedAt, stoppedAt, numberOfStops, direction, weightTransported) VALUES (?, ?, ?, ?, ?, ?)";
             statement = connection.prepareStatement(DDL);
@@ -35,8 +35,7 @@ public class Repository {
             statement.setString(5, (String) params[4]);
             statement.setInt(6, (int) params[5]);
             statement.executeUpdate();
-            return true;
+
         }
-        return false;
     }
 }

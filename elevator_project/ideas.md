@@ -39,10 +39,14 @@ long weight; (in kg);
 
 ## Pasi
 
-1. Seteaza-ti JDBC, vezi cum faci proceduri, apeleaza-le si vezi ca poti lua date din baza de date.
-2. Creeaza clasele Elevator pentru fiecare rand din tabela.
-3. ....
+1. Seteaza-ti JDBC, vezi cum faci proceduri, apeleaza-le si vezi ca poti lua date din baza de date. DONE (prima parte)
+2. Creeaza clasele Elevator pentru fiecare rand din tabela. (DONE)
+3. Implementeaza run() din elevator:
+      - Verifica ca lifturile isi iau datele cum trebuie cand tu adaugi clienti de la tastatura
+      - nextCalled() -> nextRequest()
 
+
+<mark>Etajele si lifturile sunt de la 0 la n-1, dar in baza de date lifturile sunt de la 1 la n!!!
 
 Ideas for SGBD:
 1. O functie care ordoneaza dupa un parametru dat dinamic + ascendent sau descendent + table_name
