@@ -1,5 +1,6 @@
 package org.example;
 
+import GUI.GUI;
 import models.*;
 
 import java.sql.SQLException;
@@ -25,6 +26,9 @@ public class Main {
 
 
     public static void main(String[] args) {
+
+        //GUI.launch(GUI.class, args);
+
         System.out.println("Initializing project...");
 
         // DATABASE
@@ -65,10 +69,7 @@ public class Main {
         String command = "";
         scanner.nextLine(); 
         while(!command.equals("exit")){
-            System.out.println("Trips:");
-            for(Trip trip : trips){
-                System.out.println(trip.toString());
-            }
+
             command = scanner.nextLine();
             if(command.matches("^client\\s\\d+\\s\\d+\\s\\d+\\s\\d+")){
                 String[] parts = command.split(" ");

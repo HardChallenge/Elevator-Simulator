@@ -18,5 +18,11 @@
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:android:1.23" level="project" />
     <orderEntry type="library" name="Maven: com.github.mifmif:generex:1.0.2" level="project" />
     <orderEntry type="library" name="Maven: dk.brics.automaton:automaton:1.11-8" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:20" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:mac-aarch64:20" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:20" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:mac-aarch64:20" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:20" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:mac-aarch64:20" level="project" />
   </component>
 </module>
