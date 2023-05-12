@@ -2,6 +2,7 @@ package models;
 
 public class Client {
     int from, to, weight;
+    boolean allowed = true;
 
     public Client(int from, int to, int weight) {
         this.from = from;

@@ -60,10 +60,10 @@ public class Main {
 
         // starting the threads
         for(Elevator elevator : elevatorList) elevator.start();
-        tripCreator.start(); // client 2 5 0 30    client 6 3 0 28   client 8 5 0 40   client 5 9 0 60
+        tripCreator.start(); // client 2 5 0 70  client 6 1 0 30 client 2 5 0 30
         //--------
         String command = "";
-        scanner.nextLine(); // clear the input from newline
+        scanner.nextLine(); 
         while(!command.equals("exit")){
             System.out.println("Trips:");
             for(Trip trip : trips){

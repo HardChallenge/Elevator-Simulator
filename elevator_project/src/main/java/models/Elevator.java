@@ -8,16 +8,17 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Elevator extends Thread{
-    private int elevatorID, maxCapacity, currentCapacity = 0;
-    private boolean haveMirror;
-    private String backgroundColor;
+    private final int elevatorID, maxCapacity;
+    private int currentCapacity;
+    private final boolean haveMirror;
+    private final String backgroundColor;
     private int currentFloor = 0;
     private List<Client> requests;
     private List<Client> called;
     private List<Client> newCalled;
     private String direction = "Going Up";
     private String nextFloor = "none -1";
-    private boolean justStarted = false;
+    private boolean justStarted = false, justForbiddenClients = false;
     private volatile boolean running = true;
     public int weightTransported  = 0, numberOfStops = 0;
     public Timestamp startedAt, stoppedAt;
@@ -57,12 +58,14 @@ public class Elevator extends Thread{
             startedAt = new Timestamp(System.currentTimeMillis());
 
             while((called.size() != 0 || requests.size() != 0) && running){
+                System.out.printf("currentCapacity: %d, requests: %d, called: %d, direction: %s, floorToGo: %s ", currentCapacity, requests.size(), called.size() + newCalled.size(), direction, nextFloor);
                 if(!justStarted){
                     justStarted = true;
                     nextFloor = nextCalled(); // verificam in directia in care a mers ultima data liftul
                     if(nextFloor.equals("none -1")){ // daca nu gasim, sigur avem in cealalta directie, schimbam directia
+                        System.out.println("Am intrat aici");
                         changeDirection();
-                        nextFloor = nextCalled();
+                        nextFloor = nextCalled(); // client 2 5 0 100  client 4 1 0 100  client 8 2 0 100 client 2 3 0 100 client
                     }
                 }
                 if(newCalled.size() != 0)
@@ -71,7 +74,7 @@ public class Elevator extends Thread{
                 floorToGo = Integer.parseInt(nextFloor.split(" ")[1]);
                 if(floorToGo == currentFloor) {
                     numberOfStops++;
-                    System.out.println(String.format("Elevator (ID: %d) reached a destination: %s. ", elevatorID, nextFloor));
+                    System.out.printf("Elevator (ID: %d) reached a destination: %s. %n", elevatorID, nextFloor);
                     takeClients(currentFloor);
                     dropClients(currentFloor);
                     nextFloor = nextCalled();
@@ -91,12 +94,20 @@ public class Elevator extends Thread{
                 }
                 if(direction.equals("Going Down") && !nextFloor.equals("none -1")){
                     currentFloor -= 1;
-                    System.out.println(String.format("Elevator (ID: %d) going down, %d -> %d", elevatorID, currentFloor + 1, currentFloor));
+                    if (justForbiddenClients) {
+                        resetAllowance(currentFloor + 1);
+                        justForbiddenClients = false;
+                    }
+                    System.out.printf("Elevator (ID: %d) going down, %d -> %d\n", elevatorID, currentFloor + 1, currentFloor);
                 } else if (direction.equals("Going Up") && !nextFloor.equals("none -1")){
                     currentFloor += 1;
-                    System.out.println(String.format("Elevator (ID: %d) going up, %d -> %d",elevatorID, currentFloor - 1, currentFloor));
+                    if(justForbiddenClients) {
+                        resetAllowance(currentFloor - 1);
+                        justForbiddenClients = false;
+                    }
+                    System.out.printf("Elevator (ID: %d) going up, %d -> %d\n",elevatorID, currentFloor - 1, currentFloor);
                 } else {
-                    System.out.println(String.format("Elevator (ID: %d) in idle state, floor %d.", elevatorID, currentFloor));
+                    System.out.printf("Elevator (ID: %d) in idle state, floor %d.\n", elevatorID, currentFloor);
                     stoppedAt = new Timestamp(System.currentTimeMillis());
                 }
 
@@ -118,7 +129,7 @@ public class Elevator extends Thread{
         if(direction.contains("Going Up")){
             best = Main.numberOfFloors;
             for(Client client : called){
-                if(client.from > currentFloor && client.from < best){
+                if(client.from >= currentFloor && client.from <= best && client.allowed){
                     best = client.from;
                 }
             }
@@ -127,7 +138,7 @@ public class Elevator extends Thread{
         } else {
             best = -1;
             for(Client client : called){
-                if(client.from < currentFloor && client.from > best){
+                if(client.from <= currentFloor && client.from >= best && client.allowed){
                    best = client.from;
                 }
             }
@@ -144,7 +155,7 @@ public class Elevator extends Thread{
         if(direction.contains("Going Up")){
             bestRequest = Main.numberOfFloors;
             for(Client client : requests){
-                if(client.to > currentFloor && client.to < bestRequest) bestRequest = client.to;
+                if(client.to >= currentFloor && client.to <= bestRequest && client.allowed) bestRequest = client.to;
             }
             if(bestCall == -1 && bestRequest == Main.numberOfFloors) return "none -1";
             if(bestCall == -1) return "Request " + bestRequest;
@@ -154,7 +165,7 @@ public class Elevator extends Thread{
         } else { // Going Down
             bestRequest = -1;
             for(Client client : requests){
-                if(client.to < currentFloor && client.to > bestRequest) bestRequest = client.to;
+                if(client.to <= currentFloor && client.to >= bestRequest && client.allowed) bestRequest = client.to;
             }
 
             if(bestCall == -1 && bestRequest == -1) return "none -1";
@@ -202,10 +213,13 @@ public class Elevator extends Thread{
                     iterator.remove(); // remove the element using the iterator
                 } else {
                     System.out.println("Nu se poate lua clientul, capacitate maxima depasita.");
+                    client.allowed = false;
+                    justForbiddenClients = true;
                 }
             }
         }
     }
+
     private void dropClients(int to){
         Iterator<Client> iterator = requests.iterator();
         while(iterator.hasNext()) {
@@ -216,8 +230,15 @@ public class Elevator extends Thread{
             }
         }
     }
+
     private void changeDirection(){
         if(direction.equals("Going Up")) direction = "Going Down";
             else direction = "Going Up";
+    }
+
+    private void resetAllowance(int from){
+        for (Client client : called){
+            if(client.from == from) client.allowed = true;
+        }
     }
 }
