@@ -18,16 +18,16 @@ public class Main {
     public static List<Elevator> elevatorList;
     private static volatile List<List<Client>> calls;
     public static volatile ConcurrentLinkedQueue<Trip> trips;
+    public static volatile List<Integer> floorsToGo;
 
     static{
         calls = new ArrayList<>();
         trips = new ConcurrentLinkedQueue<>();
+        floorsToGo = new ArrayList<>();
     }
 
 
     public static void main(String[] args) {
-
-        //GUI.launch(GUI.class, args);
 
         System.out.println("Initializing project...");
 
@@ -45,6 +45,7 @@ public class Main {
         elevatorList = new ElevatorCreator(numberOfElevators, repository).create();
         for(int i = 0, n = elevatorList.size(); i<n; i++){
             calls.add(new ArrayList<>());
+            floorsToGo.add(0);
         }
         TripCreator tripCreator = new TripCreator(repository);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -59,6 +60,10 @@ public class Main {
                 throw new RuntimeException(e);
             }
         }));
+
+        new Thread(() -> {
+            GUI.launch(GUI.class, args);
+        }).start();
 
         System.out.println("Project initialized successfully.\nTo add clients -> client <from> <to> <elevatorId> <weight>");
 
@@ -132,5 +137,9 @@ public class Main {
         if(from < 0 || from > numberOfFloors - 1 || to < 0 || to > numberOfFloors - 1
                 || weight < 5 || weight > 100 || elevatorId < 0 || elevatorId > elevatorList.size()-1) return false;
         return true;
+    }
+
+    public static synchronized void setFloorsToGo(int elevatorId, int floor){
+        floorsToGo.set(elevatorId, floor);
     }
 }

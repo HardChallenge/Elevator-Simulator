@@ -67,6 +67,7 @@ public class Elevator extends Thread{
                         changeDirection();
                         nextFloor = nextCalled(); // client 2 5 0 100  client 4 1 0 100  client 8 2 0 100 client 2 3 0 100 client
                     }
+                    Main.setFloorsToGo(elevatorID, Integer.parseInt(nextFloor.split(" ")[1]));
                 }
                 if(newCalled.size() != 0)
                     checkNew();
@@ -84,6 +85,8 @@ public class Elevator extends Thread{
                         changeDirection();
                         nextFloor = nextCalled();
                     }
+
+                    Main.setFloorsToGo(elevatorID, Integer.parseInt(nextFloor.split(" ")[1]));
 
                     try {
                         sleep(8000);
@@ -184,6 +187,7 @@ public class Elevator extends Thread{
                 if(client.from > currentFloor && client.from < floorToGo) {
                     floorToGo = client.from;
                     nextFloor = "Call " + floorToGo;
+                    Main.setFloorsToGo(elevatorID, Integer.parseInt(nextFloor.split(" ")[1]));
                 }
                 called.add(client);
             }
@@ -193,6 +197,7 @@ public class Elevator extends Thread{
                 if(client.from < currentFloor && client.from > floorToGo) {
                     floorToGo = client.from;
                     nextFloor = "Call " + floorToGo;
+                    Main.setFloorsToGo(elevatorID, Integer.parseInt(nextFloor.split(" ")[1]));
                 }
                 called.add(client);
             }
