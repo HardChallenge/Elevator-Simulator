@@ -5,6 +5,7 @@ import javafx.animation.PathTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
@@ -27,7 +28,7 @@ import java.util.Map;
 public class GUI extends Application {
 
 
-    int nrOfFloors, nrOfElevators; // numarul de etaje influenteaza startul lifturilor
+    int nrOfFloors, nrOfElevators;
     double elevatorWidth;
     double floorHeight;
     double maxHeight = 150;
@@ -35,7 +36,7 @@ public class GUI extends Application {
     private double screenHeight = Screen.getPrimary().getVisualBounds().getHeight() + 71;
     private Image hallwayImage, elevatorImage;
     private String currentDir = System.getProperty("user.dir");
-    private List<Integer> floorsToGo;
+    private List<Integer> oldFloors;
     private List<PathTransition> elevatorTransitions;
     private List<ImageView> elevatorViews;
     private int conversion;
@@ -67,13 +68,12 @@ public class GUI extends Application {
 
         conversion = convertHeight();
 
-        floorsToGo = Main.floorsToGo;
-
+        oldFloors = new ArrayList<>(Main.floorsToGo);
         Thread thread = new Thread(() -> {
-            // Simulate receiving information every second
+            // Simulate receiving information every 2 seconds
             while (true) {
                 try {
-                    Thread.sleep(8000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -85,34 +85,38 @@ public class GUI extends Application {
     }
 
    private void refresh(){
-        List<Integer> newFloors = Main.floorsToGo;
-       for(int i = 0, n = newFloors.size(); i<n; i++){
-            int newFloor = newFloors.get(i);
-            if(newFloor != -1) changeElevatorTransition(i, newFloor);
+       for(int i = 0, n = oldFloors.size(); i<n; i++){
+            int oldFloor = oldFloors.get(i), newFloor = Main.floorsToGo.get(i);
+            if(newFloor != oldFloor && newFloor != -1) changeElevatorTransition(i, newFloor);
         }
 
-        floorsToGo = newFloors;
+       oldFloors = new ArrayList<>(Main.floorsToGo);
    }
 
 
    private void changeElevatorTransition(int elevatorId, int newFloor){
        ImageView elevator = elevatorViews.get(elevatorId);
-       double currentY = elevator.getTranslateY();
+       Point2D imageViewPosition = elevator.localToScene(elevator.getBoundsInLocal().getMinX(), elevator.getBoundsInLocal().getMinY());
+       double goToY = (screenHeight - floorHeight) - floorHeight * newFloor + conversion;
+       double currentY = imageViewPosition.getY() + conversion;
        PathTransition oldPathTransition = elevatorTransitions.get(elevatorId);
+
 
        if(oldPathTransition != null) oldPathTransition.stop();
 
+
        Path path = new Path();
-       path.getElements().add(new MoveTo(elevatorViews.get(elevatorId).getX() + 53, elevatorViews.get(elevatorId).getTranslateY() + conversion));
-       path.getElements().add(new LineTo(elevatorViews.get(elevatorId).getX() + 53, (screenHeight - floorHeight) - floorHeight * newFloor + conversion));
+       path.getElements().add(new MoveTo(elevatorViews.get(elevatorId).getX() + 53, currentY));
+       path.getElements().add(new LineTo(elevatorViews.get(elevatorId).getX() + 53, goToY));
        PathTransition pathTransition = new PathTransition();
-       pathTransition.setDuration(Duration.millis(6000)); //TODO: change the duration dynamic
+       pathTransition.setDuration(Duration.millis(Math.abs(currentY - goToY) * (Main.TRAVERSE_FLOOR / 140.0))); //TODO: 1 px = ... miliseconds, => abs(goToY - currentY) * ... miliseconds
        pathTransition.setPath(path);
-       pathTransition.setNode(elevatorViews.get(elevatorId));
+       pathTransition.setNode(elevator);
 
        elevatorTransitions.set(elevatorId, pathTransition);
        pathTransition.play();
    }
+
 
     private void calculateFloorHeight(int n, double screenHeight){
         if(screenHeight / n > 150) { // incap toate

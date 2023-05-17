@@ -58,12 +58,11 @@ public class Elevator extends Thread{
             startedAt = new Timestamp(System.currentTimeMillis());
 
             while((called.size() != 0 || requests.size() != 0) && running){
-                System.out.printf("currentCapacity: %d, requests: %d, called: %d, direction: %s, floorToGo: %s ", currentCapacity, requests.size(), called.size() + newCalled.size(), direction, nextFloor);
+//                System.out.printf("currentCapacity: %d, requests: %d, called: %d, direction: %s, floorToGo: %s ", currentCapacity, requests.size(), called.size() + newCalled.size(), direction, nextFloor);
                 if(!justStarted){
                     justStarted = true;
                     nextFloor = nextCalled(); // verificam in directia in care a mers ultima data liftul
                     if(nextFloor.equals("none -1")){ // daca nu gasim, sigur avem in cealalta directie, schimbam directia
-                        System.out.println("Am intrat aici");
                         changeDirection();
                         nextFloor = nextCalled(); // client 2 5 0 100  client 4 1 0 100  client 8 2 0 100 client 2 3 0 100 client
                     }
@@ -75,7 +74,7 @@ public class Elevator extends Thread{
                 floorToGo = Integer.parseInt(nextFloor.split(" ")[1]);
                 if(floorToGo == currentFloor) {
                     numberOfStops++;
-                    System.out.printf("Elevator (ID: %d) reached a destination: %s. %n", elevatorID, nextFloor);
+//                    System.out.printf("Elevator (ID: %d) reached a destination: %s. %n", elevatorID, nextFloor);
                     takeClients(currentFloor);
                     dropClients(currentFloor);
                     nextFloor = nextCalled();
@@ -89,7 +88,7 @@ public class Elevator extends Thread{
                     Main.setFloorsToGo(elevatorID, Integer.parseInt(nextFloor.split(" ")[1]));
 
                     try {
-                        sleep(8000);
+                        sleep(Main.WAIT_FOR_CLIENTS);
                     } catch (InterruptedException e) { // asteptam clientii sa se urce in lift
                         throw new RuntimeException(e);
                     }
@@ -101,21 +100,21 @@ public class Elevator extends Thread{
                         resetAllowance(currentFloor + 1);
                         justForbiddenClients = false;
                     }
-                    System.out.printf("Elevator (ID: %d) going down, %d -> %d\n", elevatorID, currentFloor + 1, currentFloor);
+//                    System.out.printf("Elevator (ID: %d) going down, %d -> %d\n", elevatorID, currentFloor + 1, currentFloor);
                 } else if (direction.equals("Going Up") && !nextFloor.equals("none -1")){
                     currentFloor += 1;
                     if(justForbiddenClients) {
                         resetAllowance(currentFloor - 1);
                         justForbiddenClients = false;
                     }
-                    System.out.printf("Elevator (ID: %d) going up, %d -> %d\n",elevatorID, currentFloor - 1, currentFloor);
+//                    System.out.printf("Elevator (ID: %d) going up, %d -> %d\n",elevatorID, currentFloor - 1, currentFloor);
                 } else {
-                    System.out.printf("Elevator (ID: %d) in idle state, floor %d.\n", elevatorID, currentFloor);
+//                    System.out.printf("Elevator (ID: %d) in idle state, floor %d.\n", elevatorID, currentFloor);
                     stoppedAt = new Timestamp(System.currentTimeMillis());
                 }
 
                 try {
-                    sleep(8000); // pentru traversarea unui etaj
+                    sleep(Main.TRAVERSE_FLOOR); // pentru traversarea unui etaj
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }

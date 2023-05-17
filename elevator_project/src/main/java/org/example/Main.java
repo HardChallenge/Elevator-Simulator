@@ -19,6 +19,8 @@ public class Main {
     private static volatile List<List<Client>> calls;
     public static volatile ConcurrentLinkedQueue<Trip> trips;
     public static volatile List<Integer> floorsToGo;
+    public static final int WAIT_FOR_CLIENTS = 5000; // asteptam clientii sa urce in lift
+    public static final int TRAVERSE_FLOOR = 5000; // asteptam traversarea unui etaj
 
     static{
         calls = new ArrayList<>();
