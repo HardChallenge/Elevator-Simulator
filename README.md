@@ -1,5 +1,5 @@
 # Elevator-Simulator
-Inspired by the real life elevator, this multi-threaded application implements an exact replica of a set of elevators which can work in any building as long as the number
+Inspired by the real life elevator, this multi-threaded, graphic application implements an exact replica of a set of elevators which can work in any building as long as the number
 of floors is specified. It uses simple Java combined with PostgreSQL through JDBC.
 
 # Implementation
