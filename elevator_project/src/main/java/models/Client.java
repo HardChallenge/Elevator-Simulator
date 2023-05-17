@@ -1,13 +1,14 @@
 package models;
 
 public class Client {
-    int from, to, weight;
-    boolean allowed = true;
+    public int from, to, weight, elevatorId;
+    public boolean allowed = true;
 
-    public Client(int from, int to, int weight) {
+    public Client(int from, int to, int weight, int elevatorId) {
         this.from = from;
         this.to = to;
         this.weight = weight;
+        this.elevatorId = elevatorId;
     }
 
     @Override

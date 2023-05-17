@@ -82,7 +82,7 @@ public class Main {
                 String[] parts = command.split(" ");
                 int from = Integer.parseInt(parts[1]), to = Integer.parseInt(parts[2]), elevatorId = Integer.parseInt(parts[3]), weight = Integer.parseInt(parts[4]);
                 if(validateInput(from, to, elevatorId, weight)){
-                    access("write", elevatorId, new Client(from, to, weight));
+                    access("write", elevatorId, new Client(from, to, weight, elevatorId));
                 } else {
                     System.out.println("Invalid data.");
                 }
@@ -129,6 +129,8 @@ public class Main {
             //params: int elevatorId -> params[0], Client client -> params[1];
             int elevatorId = (int) params[0];
             Client client = (Client) params[1];
+            GUI.getDestinationsFromMain.add(client.from);
+            GUI.personElevator.add(client.elevatorId);
             calls.get(elevatorId).add(client);
             return null;
         }

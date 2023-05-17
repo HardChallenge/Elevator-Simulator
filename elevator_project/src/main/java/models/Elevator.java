@@ -44,7 +44,6 @@ public class Elevator extends Thread{
         int floorToGo;
         while(running){
             while(called.size() == 0 && running){ // nu avem nici request-uri
-                System.out.println("Elevator " + elevatorID + ": Waiting for calls...");
                 try {
                     sleep(6000);
                 } catch (InterruptedException e) {
