@@ -8,6 +8,6 @@ Inspired by the real life elevator, this multi-threaded, graphic application imp
 4. 'GUI' thread which is reponsible with all the graphics displayed on the screen.
 
 # Known bugs
-Algorithm side: none
+Algorithm side: none  
 GUI side: 
 - when the algorithm will not take any more clients because the elevator is at limit capacity ((maxCapacity - 100) -> maxCapacity) the GUI will 'falsely' take them, eventually returning to the same floor where the clients dissappeared
