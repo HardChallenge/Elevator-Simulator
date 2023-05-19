@@ -3,10 +3,17 @@ package GUI;
 import javafx.animation.PathTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.image.*;
 import javafx.scene.shape.LineTo;
@@ -15,10 +22,14 @@ import javafx.scene.shape.Path;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import models.Client;
 import org.example.Main;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 
 import java.io.FileInputStream;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class GUI extends Application {
@@ -58,15 +69,8 @@ public class GUI extends Application {
         hallwayImage = new Image(new FileInputStream(currentDir + "/src/static/hallway.jpeg"));
         elevatorImage = new Image(new FileInputStream(currentDir + "/src/static/elevator.png"));
         personImage = new Image(new FileInputStream(currentDir + "/src/static/person.png"));
+
         root = renderBackground();
-
-
-        for (int i = 0; i < nrOfElevators; i++) {
-            ImageView elevatorView = renderElevator(i, 0, elevatorImage);
-            root.getChildren().add(elevatorView);
-            elevatorViews.add(elevatorView);
-            elevatorTransitions.add(null);
-        }
 
         Scene scene = new Scene(root, screenWidth, screenHeight);
 
@@ -94,6 +98,22 @@ public class GUI extends Application {
         });
         thread.setDaemon(true);
         thread.start();
+    }
+
+    private TextField createNumericField() {
+        TextField textField = new TextField();
+
+        // Set up a TextFormatter to allow only digits in the TextField
+        TextFormatter<String> textFormatter = new TextFormatter<>(change -> {
+            if (change.getText().matches("\\d*")) {
+                return change;
+            }
+            return null;
+        });
+
+        textField.setTextFormatter(textFormatter);
+
+        return textField;
     }
 
     private void refresh(){
@@ -187,7 +207,7 @@ public class GUI extends Application {
                 iterator.remove();
             }
         }
-    }
+    } // client 2 0 1 100  client 2 7 0 100  client 6 8 0 100  client 3 1 1 100
 
     private void calculateFloorHeight(int n, double screenHeight){
         if(screenHeight / n > 150) { // incap toate
@@ -200,11 +220,11 @@ public class GUI extends Application {
         System.out.println("Elevator width: " + elevatorWidth);
     }
 
-    private ImageView renderElevator(int elevatorId, int floor, Image elevatorImage){
+    private ImageView renderElevator(int elevatorId, Image elevatorImage){
         ImageView elevatorView = new ImageView(elevatorImage);
         elevatorView.setFitHeight(floorHeight);
         elevatorView.setFitWidth(elevatorWidth);
-        elevatorView.setY((screenHeight - floorHeight) - floorHeight * floor);
+        elevatorView.setY((screenHeight - floorHeight) - floorHeight * 0);
         elevatorView.setX(elevatorWidth * elevatorId);
         return elevatorView;
     }
@@ -227,6 +247,60 @@ public class GUI extends Application {
 
             currentHeight -= floorHeight;
         }
+
+        for (int i = 0; i < nrOfElevators; i++) {
+            ImageView elevatorView = renderElevator(i, elevatorImage);
+            root.getChildren().add(elevatorView);
+            elevatorViews.add(elevatorView);
+            elevatorTransitions.add(null);
+        }
+
+        TextField inputFrom = createNumericField(), inputTo = createNumericField(), elevatorId = createNumericField(), weight = createNumericField();
+        Label labelFrom = new Label("from: "), labelTo = new Label("to: "), labelElevator = new Label("ID: "), labelWeight = new Label("weight: ");
+        Button submitData = new Button("Submit data");
+        submitData.setOnAction(event -> {
+            int valueTo = Integer.parseInt(inputTo.getText());
+            int valueFrom = Integer.parseInt(inputFrom.getText());
+            int valueElevatorId = Integer.parseInt(elevatorId.getText());
+            int valueWeight = Integer.parseInt(weight.getText());
+
+            if(Main.validateInput(valueFrom, valueTo, valueElevatorId, valueWeight)){
+                Main.access("write", valueElevatorId, new Client(valueFrom, valueTo, valueWeight, valueElevatorId));
+            }
+
+        });
+        inputFrom.setOnAction(e -> submitData.fire());
+        inputTo.setOnAction(e -> submitData.fire());
+        elevatorId.setOnAction(e -> submitData.fire());
+        weight.setOnAction(e -> submitData.fire());
+
+        inputFrom.setPrefWidth(65);
+        inputTo.setPrefWidth(65);
+        elevatorId.setPrefWidth(65);
+        weight.setPrefWidth(65);
+
+        labelFrom.setStyle("-fx-padding: 4 0 0 0");
+        labelTo.setStyle("-fx-padding: 4 0 0 0");
+        labelElevator.setStyle("-fx-padding: 4 0 0 0");
+        labelWeight.setStyle("-fx-padding: 4 0 0 0");
+
+        HBox inputBox = new HBox();
+        inputBox.setSpacing(10);
+        inputBox.setPadding(new Insets(5));
+        inputBox.getChildren().addAll(labelFrom, inputFrom, labelTo, inputTo, labelElevator, elevatorId, labelWeight, weight);
+
+        VBox box = new VBox();
+        box.setSpacing(10);
+        box.setPadding(new Insets(10));
+        box.setAlignment(Pos.CENTER);
+        box.getChildren().addAll(inputBox, submitData);
+
+        box.setLayoutX(screenWidth - 465);
+        box.setStyle("-fx-background-color: #FFE4C4;");
+
+
+        root.getChildren().add(box);
+
         return root;
     }
 
@@ -236,14 +310,14 @@ public class GUI extends Application {
     }
 
     private double multiplier(){
-        switch (nrOfFloors){
-            case 2: return 1;
-            case 3: return 1.25;
-            case 4: return 1.5;
-            case 5: return 2.5;
-            case 6: return 4;
-            default: return 0;
-        }
+        return switch (nrOfFloors) {
+            case 2 -> 1;
+            case 3 -> 1.25;
+            case 4 -> 1.5;
+            case 5 -> 2.5;
+            case 6 -> 4;
+            default -> 0;
+        };
     }
 }
 

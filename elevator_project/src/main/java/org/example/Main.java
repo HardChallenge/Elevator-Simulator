@@ -137,7 +137,7 @@ public class Main {
         return new ArrayList<>();
     }
 
-    private static boolean validateInput(int from, int to, int elevatorId, int weight){
+    public static boolean validateInput(int from, int to, int elevatorId, int weight){
         if(from < 0 || from > numberOfFloors - 1 || to < 0 || to > numberOfFloors - 1
                 || weight < 5 || weight > 100 || elevatorId < 0 || elevatorId > elevatorList.size()-1) return false;
         return true;
