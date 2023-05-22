@@ -63,3 +63,7 @@ Daca liftul e la etajul 0 si primeste call la etajul 0, nu merge.
 ## Ce mai trebuie implementat
 Chestiile legate de Trips care sunt in telefon
 Sa verifici daca atunci cand capacitatea este maxima, lucrurile merg asa cum trebuie
+
+## SGBD 
+Un pachet (schema) pe nume utils ce va avea o functie: updateStatistics() care scrie intr-un fisier statistici legate de lifturi cu datele pe care le are acum
+Exceptii proprii: Nu sunt date in tabela trips, actualizare deja facuta (pastrezi intr-o variabila numarul de randuri cand ai facut actualizarea in updateStatistics() si compari cu cate are acum)

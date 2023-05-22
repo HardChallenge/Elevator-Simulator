@@ -1,6 +1,7 @@
 package GUI;
 
 import javafx.animation.PathTransition;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -19,10 +20,12 @@ import javafx.scene.image.*;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.stage.Popup;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import models.Client;
+import models.Repository;
 import org.example.Main;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -70,7 +73,7 @@ public class GUI extends Application {
         elevatorImage = new Image(new FileInputStream(currentDir + "/src/static/elevator.png"));
         personImage = new Image(new FileInputStream(currentDir + "/src/static/person.png"));
 
-        root = renderBackground();
+        root = renderBackground(primaryStage);
 
         Scene scene = new Scene(root, screenWidth, screenHeight);
 
@@ -229,7 +232,7 @@ public class GUI extends Application {
         return elevatorView;
     }
 
-    private Pane renderBackground(){
+    private Pane renderBackground(Stage primaryStage){
         Pane root = new Pane();
         root.setBackground(Background.fill(Color.BISQUE));
 
@@ -258,6 +261,7 @@ public class GUI extends Application {
         TextField inputFrom = createNumericField(), inputTo = createNumericField(), elevatorId = createNumericField(), weight = createNumericField();
         Label labelFrom = new Label("from: "), labelTo = new Label("to: "), labelElevator = new Label("ID: "), labelWeight = new Label("weight: ");
         Button submitData = new Button("Submit data");
+        Button updateStatistics = new Button("Generate/Update statistics");
         submitData.setOnAction(event -> {
             int valueTo = Integer.parseInt(inputTo.getText());
             int valueFrom = Integer.parseInt(inputFrom.getText());
@@ -267,6 +271,26 @@ public class GUI extends Application {
             if(Main.validateInput(valueFrom, valueTo, valueElevatorId, valueWeight)){
                 Main.access("write", valueElevatorId, new Client(valueFrom, valueTo, valueWeight, valueElevatorId));
             }
+
+        });
+        updateStatistics.setOnAction(event -> {
+            Label popUpLabel = new Label(Repository.updateStatistics());
+            popUpLabel.setStyle("-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #050742;");
+
+            Popup popUp = new Popup();
+            popUp.getContent().add(popUpLabel);
+
+            popUp.setAutoFix(true);
+            popUp.setAnchorX(650);
+            popUp.setAnchorY(60);
+
+            popUp.show(primaryStage);
+
+            PauseTransition pause = new PauseTransition(Duration.seconds(3));
+
+            pause.setOnFinished(event2 -> popUp.hide());
+
+            pause.play();
 
         });
         inputFrom.setOnAction(e -> submitData.fire());
@@ -293,7 +317,7 @@ public class GUI extends Application {
         box.setSpacing(10);
         box.setPadding(new Insets(10));
         box.setAlignment(Pos.CENTER);
-        box.getChildren().addAll(inputBox, submitData);
+        box.getChildren().addAll(inputBox, submitData, updateStatistics);
 
         box.setLayoutX(screenWidth - 465);
         box.setStyle("-fx-background-color: #FFE4C4;");

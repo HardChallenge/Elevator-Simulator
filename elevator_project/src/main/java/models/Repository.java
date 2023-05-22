@@ -3,7 +3,7 @@ package models;
 import java.sql.*;
 
 public class Repository {
-    public Connection connection;
+    public static Connection connection;
 
     public Repository(String url, String user, String password) throws SQLException {
         connection = DriverManager.getConnection(url, user, password);
@@ -12,6 +12,18 @@ public class Repository {
     public void initialize() throws SQLException {
         Statement statement = connection.createStatement();
         statement.executeUpdate("call initialize()");
+    }
+
+    public static String updateStatistics(){
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+            statement.execute("select update_statistics()");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return e.getMessage().split(":")[1].split("Where")[0].trim();
+        }
+        return "Statistics updated successfully.";
     }
 
     public void create(String name, Object... params) throws SQLException {

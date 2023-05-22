@@ -1,0 +1,19 @@
+Elevator with ID 0 has the next statistics: 
+    Average weight transported -> 30
+    Maximum weight transported in one go -> 40
+    Average duration of a trip -> 00:00:27
+    Average number of stops in one direction -> 2
+=======================================
+Elevator with ID 1 has the next statistics: 
+    Average weight transported -> N/A
+    Maximum weight transported in one go -> N/A
+    Average duration of a trip -> N/A
+    Average number of stops in one direction -> N/A
+=======================================
+Elevator with ID 2 has the next statistics: 
+    Average weight transported -> N/A
+    Maximum weight transported in one go -> N/A
+    Average duration of a trip -> N/A
+    Average number of stops in one direction -> N/A
+=======================================
+

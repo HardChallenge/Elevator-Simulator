@@ -1,0 +1,1 @@
+\nElevator with ID 1 has the next statistics: \n=======================================\nElevator with ID 2 has the next statistics: \n=======================================\nElevator with ID 3 has the next statistics: \n=======================================\nElevator with ID 4 has the next statistics: \n=======================================
