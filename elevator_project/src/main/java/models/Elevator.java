@@ -57,7 +57,6 @@ public class Elevator extends Thread{
             startedAt = new Timestamp(System.currentTimeMillis());
 
             while((called.size() != 0 || requests.size() != 0) && running){
-//                System.out.printf("currentCapacity: %d, requests: %d, called: %d, direction: %s, floorToGo: %s ", currentCapacity, requests.size(), called.size() + newCalled.size(), direction, nextFloor);
                 if(!justStarted){
                     justStarted = true;
                     nextFloor = nextCalled(); // verificam in directia in care a mers ultima data liftul
@@ -73,7 +72,6 @@ public class Elevator extends Thread{
                 floorToGo = Integer.parseInt(nextFloor.split(" ")[1]);
                 if(floorToGo == currentFloor) {
                     numberOfStops++;
-//                    System.out.printf("Elevator (ID: %d) reached a destination: %s. %n", elevatorID, nextFloor);
                     takeClients(currentFloor);
                     dropClients(currentFloor);
                     nextFloor = nextCalled();
@@ -99,16 +97,13 @@ public class Elevator extends Thread{
                         resetAllowance(currentFloor + 1);
                         justForbiddenClients = false;
                     }
-//                    System.out.printf("Elevator (ID: %d) going down, %d -> %d\n", elevatorID, currentFloor + 1, currentFloor);
                 } else if (direction.equals("Going Up") && !nextFloor.equals("none -1")){
                     currentFloor += 1;
                     if(justForbiddenClients) {
                         resetAllowance(currentFloor - 1);
                         justForbiddenClients = false;
                     }
-//                    System.out.printf("Elevator (ID: %d) going up, %d -> %d\n",elevatorID, currentFloor - 1, currentFloor);
                 } else {
-//                    System.out.printf("Elevator (ID: %d) in idle state, floor %d.\n", elevatorID, currentFloor);
                     stoppedAt = new Timestamp(System.currentTimeMillis());
                 }
 

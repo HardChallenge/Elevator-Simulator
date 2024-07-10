@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Elevator-Simulator.iml" filepath="$PROJECT_DIR$/.idea/Elevator-Simulator.iml" />
-      <module fileurl="file://$PROJECT_DIR$/elevator_project/elevator_project.iml" filepath="$PROJECT_DIR$/elevator_project/elevator_project.iml" />
     </modules>
   </component>
 </project>
