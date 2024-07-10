@@ -19,6 +19,7 @@ Inspired by the real life elevator, this multi-threaded, graphic application imp
 - [Technologies](#technologies)
 - [Setup Guide](#setup-guide)
 - [Usage](#usage)
+- [Photos](#photos)
 
 ---
 
@@ -65,7 +66,7 @@ git clone https://github.com/HardChallenge/Elevator-Simulator.git
 2. Change the directory:
 
 ```bash
-cd Elevator-Simulator
+cd Elevator-Simulator/elevator_project
 ```
 
 ---
@@ -75,10 +76,17 @@ cd Elevator-Simulator
 Run the application:
 
 ```bash
-javac elevator_project/src/main/org/example/Main.java
-java elevator_project/src/main/org/example/Main
+javac src/main/org/example/Main.java
+java esrc/main/org/example/Main
 ```
 
 ---
+
+## Photos
+
+![Elevator Simulator1!](elevator_project/src/static/demo/Screenshot%202024-07-10%20at%2019.43.36.png)
+
+![Elevator Simulator2!](elevator_project/src/static/demo/Screenshot%202024-07-10%20at%2019.44.19.png)
+
 
 
